@@ -176,6 +176,20 @@ model = VGG16(include_top=True, weights='imagenet')
 input_shape = model.layers[0].output_shape[1:3]
 print(input_shape)
 
+datagen_train = ImageDataGenerator(
+      rescale=1./255,
+      rotation_range=180,
+      width_shift_range=0.1,
+      height_shift_range=0.1,
+      shear_range=0.1,
+      zoom_range=[0.9, 1.5],
+      horizontal_flip=True,
+      vertical_flip=True,
+      fill_mode='nearest')
+datagen_test = ImageDataGenerator(rescale=1./255)
+batch_size = 20
+
+
 
 
 
