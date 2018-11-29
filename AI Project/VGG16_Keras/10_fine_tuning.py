@@ -22,7 +22,7 @@ NOTE: It takes around 15 minutes to execute this Notebook on a laptop PC with a 
 
 ## Flowchart
 
-The idea is to re-use a pre-trained model, in this case the VGG16 model, which consists of several convolutional layers (actually blocks of multiple convolutional layers), followed by some fully-connected / dense layers and then a softmax output layer for the classification. 
+The idea is to re-use a pre-trained model, in this case the VGG16 model, which consists of several convolutional layers (actually blocks of multiple convolutional layers), followed by some fully-connected / dense layers and then a softmax output layer for the classification.
 
 The dense layers are responsible for combining features from the convolutional layers and this helps in the final classification. So when the VGG16 model is used on another dataset we may have to replace all the dense layers. In this case we add another dense-layer and a dropout-layer to avoid overfitting.
 
@@ -58,16 +58,18 @@ tf.__version__
 ### Helper-function for joining a directory and list of filenames.
 """
 
+
 def path_join(dirname, filenames):
     return [os.path.join(dirname, filename) for filename in filenames]
+
 
 """### Helper-function for plotting images
 
 Function used to plot at most 9 images in a 3x3 grid, and writing the true and predicted classes below each image.
 """
 
-def plot_images(images, cls_true, cls_pred=None, smooth=True):
 
+def plot_images(images, cls_true, cls_pred=None, smooth=True):
     assert len(images) == len(cls_true)
 
     # Create figure with sub-plots.
@@ -107,19 +109,21 @@ def plot_images(images, cls_true, cls_pred=None, smooth=True):
 
             # Show the classes as the label on the x-axis.
             ax.set_xlabel(xlabel)
-        
+
         # Remove ticks from the plot.
         ax.set_xticks([])
         ax.set_yticks([])
-    
+
     # Ensure the plot is shown correctly with multiple plots
     # in a single Notebook cell.
     plt.show()
+
 
 """### Helper-function for printing confusion matrix"""
 
 # Import a function from sklearn to calculate the confusion-matrix.
 from sklearn.metrics import confusion_matrix
+
 
 def print_confusion_matrix(cls_pred):
     # cls_pred is an array of the predicted class-number for
@@ -130,18 +134,20 @@ def print_confusion_matrix(cls_pred):
                           y_pred=cls_pred)  # Predicted class.
 
     print("Confusion matrix:")
-    
+
     # Print the confusion matrix as text.
     print(cm)
-    
+
     # Print the class-names for easy reference.
     for i, class_name in enumerate(class_names):
         print("({0}) {1}".format(i, class_name))
+
 
 """### Helper-function for plotting example errors
 
 Function for plotting examples of images from the test-set that have been mis-classified.
 """
+
 
 def plot_example_errors(cls_pred):
     # cls_pred is an array of the predicted class-number for
@@ -155,20 +161,22 @@ def plot_example_errors(cls_pred):
 
     # Load the first 9 images.
     images = load_images(image_paths=image_paths[0:9])
-    
+
     # Get the predicted classes for those images.
     cls_pred = cls_pred[incorrect]
 
     # Get the true classes for those images.
     cls_true = cls_test[incorrect]
-    
+
     # Plot the 9 images we have loaded and their corresponding classes.
     # We have only loaded 9 images so there is no need to slice those again.
     plot_images(images=images,
                 cls_true=cls_true[0:9],
                 cls_pred=cls_pred[0:9])
 
+
 """Function for calculating the predicted classes of the entire test-set and calling the above function to plot a few examples of mis-classified images."""
+
 
 def example_errors():
     # The Keras data-generator for the test-set must be reset
@@ -180,24 +188,26 @@ def example_errors():
     # If we reset the generator, then it always starts at the
     # beginning so we know exactly which input-images were used.
     generator_test.reset()
-    
+
     # Predict the classes for all images in the test-set.
     y_pred = new_model.predict_generator(generator_test,
                                          steps=steps_test)
 
     # Convert the predicted classes from arrays to integers.
-    cls_pred = np.argmax(y_pred,axis=1)
+    cls_pred = np.argmax(y_pred, axis=1)
 
     # Plot examples of mis-classified images.
     plot_example_errors(cls_pred)
-    
+
     # Print the confusion matrix.
     print_confusion_matrix(cls_pred)
+
 
 """### Helper-function for loading images
 
 The data-set is not loaded into memory, instead it has a list of the files for the images in the training-set and another list of the files for the images in the test-set. This helper-function loads some image-files.
 """
+
 
 def load_images(image_paths):
     # Load the images from disk.
@@ -206,10 +216,12 @@ def load_images(image_paths):
     # Convert to a numpy array and return it.
     return np.asarray(images)
 
+
 """### Helper-function for plotting training history
 
 This plots the classification accuracy and loss-values recorded during training with the Keras API.
 """
+
 
 def plot_training_history(history):
     # Get the classification accuracy and loss-value
@@ -224,7 +236,7 @@ def plot_training_history(history):
     # Plot the accuracy and loss-values for the training-set.
     plt.plot(acc, linestyle='-', color='b', label='Training Acc.')
     plt.plot(loss, 'o', color='b', label='Training Loss')
-    
+
     # Plot it for the test-set.
     plt.plot(val_acc, linestyle='--', color='r', label='Test Acc.')
     plt.plot(val_loss, 'o', color='r', label='Test Loss')
@@ -235,6 +247,7 @@ def plot_training_history(history):
 
     # Ensure the plot shows correctly.
     plt.show()
+
 
 """## Dataset: Knifey-Spoony
 
@@ -283,19 +296,19 @@ We have a small training-set so it helps to artificially inflate its size by mak
 """
 
 datagen_train = ImageDataGenerator(
-      rescale=1./255,
-      rotation_range=180,
-      width_shift_range=0.1,
-      height_shift_range=0.1,
-      shear_range=0.1,
-      zoom_range=[0.9, 1.5],
-      horizontal_flip=True,
-      vertical_flip=True,
-      fill_mode='nearest')
+    rescale=1. / 255,
+    rotation_range=180,
+    width_shift_range=0.1,
+    height_shift_range=0.1,
+    shear_range=0.1,
+    zoom_range=[0.9, 1.5],
+    horizontal_flip=True,
+    vertical_flip=True,
+    fill_mode='nearest')
 
 """We also need a data-generator for the test-set, but this should not do any transformations to the images because we want to know the exact classification accuracy on those specific images. So we just rescale the pixel-values so they are between 0.0 and 1.0 because this is expected by the VGG16 model."""
 
-datagen_test = ImageDataGenerator(rescale=1./255)
+datagen_test = ImageDataGenerator(rescale=1. / 255)
 
 """The data-generators will return batches of images. Because the VGG16 model is so large, the batch-size cannot be too large, otherwise you will run out of RAM on the GPU."""
 
@@ -306,7 +319,7 @@ batch_size = 20
 if True:
     save_to_dir = None
 else:
-    save_to_dir='augmented_images/'
+    save_to_dir = 'augmented_images/'
 
 """Now we create the actual data-generator that will read files from disk, resize the images and return a random batch.
 
@@ -398,7 +411,7 @@ def predict(image_path):
 
     # Plot the image.
     plt.imshow(img_resized)
-    plt.show()
+    plt.show(block=True)
 
     # Convert the PIL image to a numpy-array with the proper shape.
     img_array = np.expand_dims(np.array(img_resized), axis=0)

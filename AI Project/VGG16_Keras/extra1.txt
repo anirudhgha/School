@@ -1,0 +1,16 @@
+heavy critical prediction for not_nv1: [[0.22708374 0.77291626]]
+
+lean critical prediction for not_nv1: [[0.19545941 0.80454063]]
+
+normal prediction for not_nv1: [[0.21313764 0.7868623 ]]
+
+lean non-critical prediction for not_nv1: [[0.21468154 0.7853185 ]]
+
+heavy non-critical prediction for not_nv1: [[0.21289791 0.78710204]]
+
+
+
+
+
+"model_heavy_critical" tends to classify images as critical, rename to lean, and make the critical more heavily weighted
+
